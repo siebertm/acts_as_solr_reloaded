@@ -37,6 +37,10 @@ module ActsAsSolr #:nodoc:
       @solr_data[:docs]
     end
 
+    def each(&block)
+      results.each &block
+    end
+
     # Returns the total records found. This method is
     # also aliased as num_found and total_hits
     def total
@@ -62,7 +66,7 @@ module ActsAsSolr #:nodoc:
     def highlights
         @solr_data[:highlights]
     end
-    
+
     # Returns a suggested query
     def suggest
       @solr_data[:spellcheck]['suggestions']['collation']
@@ -82,6 +86,17 @@ module ActsAsSolr #:nodoc:
     def current_page
       (@solr_data[:start].to_i / per_page) + 1
     end
+
+    # current_page - 1 or nil if there is no previous page
+    def previous_page
+      current_page > 1 ? (current_page - 1) : nil
+    end
+
+    # current_page + 1 or nil if there is no next page
+    def next_page
+      current_page < total_pages ? (current_page + 1) : nil
+    end
+
 
     alias docs results
     alias records results
