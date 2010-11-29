@@ -6,8 +6,9 @@ module ActsAsSolr #:nodoc:
     def parse_query(query=nil, options={}, models=nil)
       valid_options = [ :offset, :limit, :facets, :models, :results_format, :order,
                                           :scores, :operator, :include, :lazy, :joins, :select, :core,
-                                          :around, :relevance, :highlight, :page, :per_page]
+                                          :around, :relevance, :highlight, :page, :per_page, :filters]
       query_options = {}
+
 
       return nil if (query.nil? || query.strip == '')
 
@@ -15,10 +16,12 @@ module ActsAsSolr #:nodoc:
       begin
         Deprecation.validate_query(options)
         per_page = options[:per_page] || options[:limit] || 30
-        offset = options[:offset] || (((options[:page] || 1).to_i - 1) * per_page) 
+        offset = options[:offset] || (((options[:page] || 1).to_i - 1) * per_page)
         query_options[:rows] = per_page
         query_options[:start] = offset
         query_options[:operator] = options[:operator]
+
+        query_options[:filter_queries] = [options[:filters]].flatten.compact
 
         query = add_relevance query, options[:relevance]
 
@@ -69,6 +72,7 @@ module ActsAsSolr #:nodoc:
 
         if models.nil?
           # TODO: use a filter query for type, allowing Solr to cache it individually
+          query_options[:filter_queries] << solr_type_condition
           models = "AND #{solr_type_condition}"
           field_list = solr_configuration[:primary_key_field]
         else
@@ -76,7 +80,6 @@ module ActsAsSolr #:nodoc:
         end
 
         query_options[:field_list] = [field_list, 'score']
-        query = "(#{query.gsub(/ *: */,"_t:")}) #{models}"
         order = options[:order].split(/\s*,\s*/).collect{|e| e.gsub(/\s+/,'_t ').gsub(/\bscore_t\b/, 'score')  }.join(',') if options[:order]
         query_options[:query] = replace_types([query])[0] # TODO adjust replace_types to work with String or Array
 
