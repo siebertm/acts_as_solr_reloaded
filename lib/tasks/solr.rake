@@ -1,4 +1,17 @@
 namespace :solr do
+  desc 'Starts Solr without forking. Options accepted: RAILS_ENV=your_env, PORT=XX. Defaults to development if none.'
+  task :run => :environment do
+    require File.expand_path("#{File.dirname(__FILE__)}/../../config/solr_environment")
+    FileUtils.mkdir_p(SOLR_LOGS_PATH)
+    FileUtils.mkdir_p(SOLR_DATA_PATH)
+    FileUtils.mkdir_p(SOLR_PIDS_PATH)
+
+    Dir.chdir(SOLR_PATH) do
+      cmd = "java #{SOLR_JVM_OPTIONS} -Djetty.logs=\"#{SOLR_LOGS_PATH}\" -Dsolr.solr.home=\"#{SOLR_CONFIG_PATH}\" -Dsolr.data.dir=\"#{SOLR_DATA_PATH}\" -Djetty.port=#{SOLR_PORT} -jar start.jar"
+      puts "Executing: " + cmd
+      exec cmd
+    end
+  end
 
   desc 'Starts Solr. Options accepted: RAILS_ENV=your_env, PORT=XX. Defaults to development if none.'
   task :start => :environment do
