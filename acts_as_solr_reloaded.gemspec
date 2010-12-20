@@ -107,7 +107,6 @@ Gem::Specification.new do |s|
      "test/db/migrate/009_create_dynamic_attributes.rb",
      "test/db/migrate/010_create_advertises.rb",
      "test/db/migrate/011_create_locals.rb",
-     "test/db/test.db",
      "test/fixtures/advertises.yml",
      "test/fixtures/authors.yml",
      "test/fixtures/books.yml",
