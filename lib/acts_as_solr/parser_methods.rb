@@ -80,7 +80,7 @@ module ActsAsSolr #:nodoc:
         end
 
         query_options[:field_list] = [field_list, 'score']
-        order = options[:order].split(/\s*,\s*/).collect{|e| e.gsub(/\s+/,'_t ').gsub(/\bscore_t\b/, 'score')  }.join(',') if options[:order]
+        order = options[:order].split(/\s*,\s*/).collect{|e| e.gsub(/\bscore_t\b/, 'score')  }.join(',') if options[:order]
         query_options[:query] = replace_types([query])[0] # TODO adjust replace_types to work with String or Array
 
             if options[:highlight]

@@ -39,7 +39,9 @@ module ActsAsSolr #:nodoc:
 
     def each(&block)
       results.each &block
+      self
     end
+
 
     # Returns the total records found. This method is
     # also aliased as num_found and total_hits
